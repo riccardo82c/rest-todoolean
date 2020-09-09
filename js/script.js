@@ -10,7 +10,12 @@ Utilizzare l’ API di esempio http://157.230.17.132:3007/todos
 
 
 $(function () {
+
 	getList();
+
+	$('#list').on('click', '.delete-item', deleteListItem);
+
+	$('#add-element-btn').click(addListItem);
 
 
 
@@ -31,12 +36,48 @@ function getList() {
 }
 
 function printList(data) {
-	var source = $("#entry-template").html();
-	var template = Handlebars.compile(source);
+	let source = $("#entry-template").html();
+	let template = Handlebars.compile(source);
 	data.forEach(element => {
 		console.log(element);
 		let context = element;
 		let html = template(context);
-		$('#list').append(html);
+		$('#list').prepend(html);
 	});
+}
+
+function deleteListItem() {
+
+	let $thisElement = $(this).parent().data('id');
+	$.ajax({
+		url: `http://157.230.17.132:3007/todos/${$thisElement}`,
+		method: 'DELETE',
+		success: function (risposta) {
+			console.log(risposta);
+			$('#list').html('');
+			getList();
+		},
+		error: function () {
+			alert('errore');
+		}
+	})
+};
+
+function addListItem() {
+	let $addElement = $('#add-element').val();
+	$('#add-element').val('');
+	$.ajax({
+		url: 'http://157.230.17.132:3007/todos',
+		method: 'POST',
+		data: {
+			text: $addElement
+		},
+		success: function () {
+			$('#list').html('');
+			getList();
+		},
+		error: function () {
+			alert('errore');
+		}
+	})
 }
