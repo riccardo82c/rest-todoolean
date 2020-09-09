@@ -10,12 +10,23 @@ Utilizzare l’ API di esempio http://157.230.17.132:3007/todos
 
 
 $(function () {
+
+	$('#add-element').focus();
+
 	// acquisisco la lista dall API
 	getList();
 	// rimozione elemento al click del tasto .delete-item
 	$('#list').on('click', '.delete-item', deleteListItem);
+
 	// aggiunta del testo al click di #add-element-btn
 	$('#add-element-btn').click(addListItem);
+
+	$('#add-element').keydown(function (e) {
+		if (e.which == 13 && e.keyCode == 13) {
+			addListItem();
+		}
+
+	});
 
 	// rinomino un elemento al click di .item
 	$('#list').on('click', '.item', renameListItem);
@@ -23,7 +34,7 @@ $(function () {
 	function renameListItem() {
 
 		$(this).toggle();
-		$(this).next().toggle();
+		$(this).next().toggle().focus();
 
 		$('#list').on('keydown', '.change-element', function (e) {
 			// valore acquisito da input
@@ -41,15 +52,14 @@ $(function () {
 
 
 				function ajaxRenameCall(id, newText) {
-					console.log(id);
 					$.ajax({
 						url: `http://157.230.17.132:3007/todos/${id}`,
-						method: 'PUT',
+						method: 'PATCH',
 						data: {
 							text: newText
 						},
 						success: function () {
-							$('#list').html('');
+
 							getList();
 						},
 						error: function () {
@@ -65,6 +75,7 @@ $(function () {
 
 
 function getList() {
+	$('#list').html('');
 	$.ajax({
 		url: 'http://157.230.17.132:3007/todos',
 		method: 'GET',
@@ -88,12 +99,11 @@ function printList(data) {
 }
 
 function deleteListItem() {
-	let $thisElement = $(this).parent().data('id');
+	let id = $(this).parent().data('id');
 	$.ajax({
-		url: `http://157.230.17.132:3007/todos/${$thisElement}`,
+		url: `http://157.230.17.132:3007/todos/${id}`,
 		method: 'DELETE',
-		success: function (risposta) {
-			$('#list').html('');
+		success: function () {
 			getList();
 		},
 		error: function () {
@@ -103,20 +113,24 @@ function deleteListItem() {
 };
 
 function addListItem() {
+
 	let $addElement = $('#add-element').val();
-	$('#add-element').val('');
-	$.ajax({
-		url: 'http://157.230.17.132:3007/todos',
-		method: 'POST',
-		data: {
-			text: $addElement
-		},
-		success: function () {
-			$('#list').html('');
-			getList();
-		},
-		error: function () {
-			alert('errore');
-		}
-	})
+
+	if ($addElement != '') {
+		$('#add-element').val('');
+		$.ajax({
+			url: 'http://157.230.17.132:3007/todos',
+			method: 'POST',
+			data: {
+				text: $addElement
+			},
+			success: function () {
+
+				getList();
+			},
+			error: function () {
+				alert('errore');
+			}
+		})
+	}
 }
