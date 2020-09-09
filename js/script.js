@@ -10,15 +10,9 @@ Utilizzare l’ API di esempio http://157.230.17.132:3007/todos
 
 
 $(function () {
-
 	getList();
-
 	$('#list').on('click', '.delete-item', deleteListItem);
-
 	$('#add-element-btn').click(addListItem);
-
-
-
 });
 
 
@@ -47,7 +41,6 @@ function printList(data) {
 }
 
 function deleteListItem() {
-
 	let $thisElement = $(this).parent().data('id');
 	$.ajax({
 		url: `http://157.230.17.132:3007/todos/${$thisElement}`,
