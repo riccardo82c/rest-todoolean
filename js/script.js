@@ -25,54 +25,12 @@ $(function () {
 		if (e.which == 13 && e.keyCode == 13) {
 			addListItem();
 		}
-
 	});
-
 	// rinomino un elemento al click di .item
 	$('#list').on('click', '.item', renameListItem);
-
-	function renameListItem() {
-
-		$(this).toggle();
-		$(this).next().toggle().focus();
-
-		$('#list').on('keydown', '.change-element', function (e) {
-			// valore acquisito da input
-			let inputText = $(this).val();
-			// id corrente
-			let thisId = $(this).data('id');
-			// show element al termine
-			let $showElement = $(`.item[data-id="${thisId}"`);
-			if (e.which == 13 && e.keyCode == 13 && inputText) {
-				$(this).val('');
-				$(this).toggle();
-				$showElement.toggle();
-
-				ajaxRenameCall(thisId, inputText);
-
-
-				function ajaxRenameCall(id, newText) {
-					$.ajax({
-						url: `http://157.230.17.132:3007/todos/${id}`,
-						method: 'PATCH',
-						data: {
-							text: newText
-						},
-						success: function () {
-
-							getList();
-						},
-						error: function () {
-							alert('errore');
-						}
-					})
-				}
-			}
-		});
-	}
-
 });
 
+// funzione
 
 function getList() {
 	$('#list').html('');
@@ -99,12 +57,14 @@ function printList(data) {
 }
 
 function deleteListItem() {
-	let id = $(this).parent().data('id');
+	let id = $(this).prev().data('id');
+	console.log(id);
 	$.ajax({
 		url: `http://157.230.17.132:3007/todos/${id}`,
 		method: 'DELETE',
 		success: function () {
 			getList();
+
 		},
 		error: function () {
 			alert('errore');
@@ -133,4 +93,44 @@ function addListItem() {
 			}
 		})
 	}
+}
+
+function renameListItem() {
+
+	// id corrente
+	let thisId = $(this).data('id');
+	// scomparsa se stesso
+	$(this).parent().toggle();
+	let $thisElement = $('#list').find(`.change-element[data-id="${thisId}"`);
+	// apparire input
+	$thisElement.toggle().focus();
+	$thisElement.keydown(function (e) {
+		let inputText = $(this).val();
+		// show element al termine
+		let $showElement = $(`.item[data-id="${thisId}"`);
+		if (e.which == 13 && e.keyCode == 13 && inputText) {
+			console.log('invio');
+			$(this).val('');
+			$(this).toggle();
+			$showElement.toggle();
+			ajaxRenameCall(thisId, inputText);
+		}
+	});
+}
+
+function ajaxRenameCall(id, newText) {
+	$.ajax({
+		url: `http://157.230.17.132:3007/todos/${id}`,
+		method: 'PATCH',
+		data: {
+			text: newText
+		},
+		success: function () {
+
+			getList();
+		},
+		error: function () {
+			alert('errore');
+		}
+	})
 }
