@@ -9,3 +9,12 @@
 	clear: both;
 	display: table;
 }
+
+
+.item {
+	cursor: pointer;
+}
+
+.change-element {
+	display: none;
+}

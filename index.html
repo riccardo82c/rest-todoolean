@@ -22,7 +22,10 @@
 
 
 	<script id="entry-template" type="text/x-handlebars-template">
-			<li data-id="{{id}}">{{text}}<button class="delete-item"> X </button></li>
+
+
+			<li class="item" data-id="{{id}}">{{text}}<button class="delete-item"> X </button></li>
+			<input type="text" class="change-element" placeholder="rinomina" data-id="{{id}}">
 		</script>
 
 	<script src="js/script.js" charset="utf-8"></script>
